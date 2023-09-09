@@ -10,16 +10,25 @@ tblastn -query "$queryfile" -subject "$subjectfile" -task blastn-short -outfmt "
 # get length of query sequence
 query_length=$(awk '/^>/ {next} {seq = seq $0} END {print length(seq)}' "$queryfile")
 
-# filter results to same length as query length and write to another file
-awk -F"\t" '{if ($4 == '"$query_length"') print}' "$outputfile" > "${outputfile}_filtered_samelength"
+# calculate 90% of the query length
+ninety_perc_query_length=$((query_length * 90 / 100))
+
+# filter results to > 90% query length and > 30% identity
+awk -F"\t" '{if ($4 > '"$ninety_perc_query_length"' && $3 > 30.000) print}' "$outputfile" > "${outputfile}_filtered"
 
 # count number of perfect matches
-perfectmatch_count=$(cat "${outputfile}_filtered_samelength" | wc -l)
+match_count=$(cat "${outputfile}_filtered" | wc -l)
 
-echo "Number of perfect matches: $perfectmatch_count"
+echo "Number of matches: $match_count"
 
 
 # added qlen field to blastn command
 # removed -perc_identity 100
 
 # changed blastn to tblastn
+
+# calculated 90% of query length and stored as variable
+# awk filter - alignment length must be > 90% query length
+# awk filter - only > 30.000 seq identity
+
+# what to do for task??
