@@ -5,7 +5,7 @@ queryfile="$1"
 subjectfile="$2"
 outputfile="$3"
 
-blastn -query "$queryfile" -subject "$subjectfile" -task blastn-short -outfmt "6 std sseq qlen" -out "$outputfile"
+tblastn -query "$queryfile" -subject "$subjectfile" -task blastn-short -outfmt "6 std sseq qlen" -out "$outputfile"
 
 # get length of query sequence
 query_length=$(awk '/^>/ {next} {seq = seq $0} END {print length(seq)}' "$queryfile")
@@ -21,3 +21,5 @@ echo "Number of perfect matches: $perfectmatch_count"
 
 # added qlen field to blastn command
 # removed -perc_identity 100
+
+# changed blastn to tblastn
